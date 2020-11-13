@@ -126,7 +126,7 @@ jobs:
           
           # 【修改固件大小】
           cat >> .config <<EOF
-          CONFIG_TARGET_KERNEL_PARTSIZE=32 # 固件中内核分区大小
+          # CONFIG_TARGET_KERNEL_PARTSIZE=32 # 固件中内核分区大小
           CONFIG_TARGET_ROOTFS_PARTSIZE=512 # 固件中ROOTFS分区大小
           EOF
           
