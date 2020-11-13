@@ -27,20 +27,20 @@ jobs:
 
     steps:
     
-      # ========================¹Ì¼þ¶¨ÖÆ²¿·Ö¿ªÊ¼========================
-      # ÉèÖÃ±äÁ¿
-      - name: set env¡¾ÉèÖÃ±äÁ¿£¬²é¿´Ê±¼ä£¬´ÅÅÌ¿Õ¼ä¡¿
+      # ========================å›ºä»¶å®šåˆ¶éƒ¨åˆ†å¼€å§‹========================
+      # è®¾ç½®å˜é‡
+      - name: set envã€è®¾ç½®å˜é‡ï¼ŒæŸ¥çœ‹æ—¶é—´ï¼Œç£ç›˜ç©ºé—´ã€‘
         id: admin
         run: |
           release_tag="OpenWrt-MSC_x86-64_$(date +%y%m%d)"
           echo "##[set-output name=release_tag;]$release_tag"
-          # ÒýÓÃ±äÁ¿
+          # å¼•ç”¨å˜é‡
           # ${{ steps.admin.outputs.release_tag }}
-          echo ÏÖÔÚÊ±¼äÊÇ£º$(date +%Y)Äê$(date +%m)ÔÂ$(date +%d)ÈÕ$(date +%H)Ê±$(date +%M)·Ö$(date +%S)Ãë
-          echo ´ÅÅÌÊ£Óà¿Õ¼ä
+          echo çŽ°åœ¨æ—¶é—´æ˜¯ï¼š$(date +%Y)å¹´$(date +%m)æœˆ$(date +%d)æ—¥$(date +%H)æ—¶$(date +%M)åˆ†$(date +%S)ç§’
+          echo ç£ç›˜å‰©ä½™ç©ºé—´
           df -hl
 
-      # ========================¹Ì¼þ¶¨ÖÆ²¿·Ö¿ªÊ¼========================
+      # ========================å›ºä»¶å®šåˆ¶éƒ¨åˆ†å¼€å§‹========================
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -61,54 +61,54 @@ jobs:
 
           df -h
 
-      - name: Update feeds¡¾¸üÐÂ°²×°feeds¡¿
+      - name: Update feedsã€æ›´æ–°å®‰è£…feedsã€‘
         run: |
           sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           
           # 
-          # ========================¹Ì¼þ¶¨ÖÆ²¿·Ö¿ªÊ¼========================
+          # ========================å›ºä»¶å®šåˆ¶éƒ¨åˆ†å¼€å§‹========================
           # 
           
-      - name: ¡¾Ìí¼ÓÖ÷ÌâÁ´½Ó¡¿
+      - name: ã€æ·»åŠ ä¸»é¢˜é“¾æŽ¥ã€‘
         run: |
           cd package
           mkdir openwrt-packages
           cd openwrt-packages
           git clone https://github.com/openwrt-develop/luci-theme-atmaterial.git
           
-          # LuCIÖ÷Ìâ:
+          # LuCIä¸»é¢˜:
           cat >> .config <<EOF
           CONFIG_PACKAGE_luci-theme-argon=y
-          CONFIG_PACKAGE_luci-theme-atmaterial=y # ºÃÏñÊ§Ð§ÁË
+          CONFIG_PACKAGE_luci-theme-atmaterial=y # å¥½åƒå¤±æ•ˆäº†
           CONFIG_PACKAGE_luci-theme-netgear=y
           EOF
           
           
-      - name: ¡¾ÐÞ¸ÄÄ¬ÈÏÉèÖÃ¡¿
+      - name: ã€ä¿®æ”¹é»˜è®¤è®¾ç½®ã€‘
         run: |
-          # ÐÞ¸ÄipµØÖ·
+          # ä¿®æ”¹ipåœ°å€
           sed -i 's/192.168.1.1/10.0.0.1/g' package/base-files/files/bin/config_generate
-          # ÐÞ¸ÄrootÃÜÂëÎª systemps
+          # ä¿®æ”¹rootå¯†ç ä¸º systemps
           sed -i 's/root::0:0:99999:7:::/root:\$1\$QQXAF6Qu\$hDLHnYthqyw36lFhPztHl0:18489:0:99999:7:::/g' package/base-files/files/etc/shadow
-          # ÐÞ¸Ähostname
+          # ä¿®æ”¹hostname
           sed -i "s/set system.@system\[-1\].hostname='OpenWrt'/set system.@system\[-1\].hostname='${{ steps.admin.outputs.release_tag }}'/g" package/base-files/files/bin/config_generate
-          # »¥»»Íø¿¨
+          # äº’æ¢ç½‘å¡
           # sed -i "s/ucidef_set_interfaces_lan_wan 'eth1' 'eth0'/ucidef_set_interfaces_lan_wan 'eth0' 'eth1'/g" target/linux/rockchip/armv8/base-files/etc/board.d/02_network
           # sed -i "s/ucidef_set_interface_lan 'eth0'/ucidef_set_interface_lan 'eth1'/g" target/linux/rockchip/armv8/base-files/etc/board.d/02_network
-          # ÐÞ¸ÄÊ±Çø
+          # ä¿®æ”¹æ—¶åŒº
           sed -i "s/set system\.@system\[-1\]\.timezone='UTC'/set system\.@system\[-1\]\.timezone='CST-8'/g" package/base-files/files/bin/config_generate
           # ===========================================
           
-      - name: Generate configuration file¡¾´´½¨configÎÄ¼þ¡¿
+      - name: Generate configuration fileã€åˆ›å»ºconfigæ–‡ä»¶ã€‘
         run: |
           rm -f ./.config*
           touch ./.config
           
           #
-          # ÔÚ cat >> .config <<EOF µ½ EOF Ö®¼äÕ³ÌùÄãµÄ±àÒëÅäÖÃ, Ðè×¢ÒâËõ½ø¹ØÏµ
-          # ÀýÈç:
+          # åœ¨ cat >> .config <<EOF åˆ° EOF ä¹‹é—´ç²˜è´´ä½ çš„ç¼–è¯‘é…ç½®, éœ€æ³¨æ„ç¼©è¿›å…³ç³»
+          # ä¾‹å¦‚:
           cat >> .config <<EOF
           CONFIG_TARGET_IMAGES_GZIP=y
           CONFIG_KERNEL_BUILD_USER="OpenWrt-MSC"
@@ -117,25 +117,25 @@ jobs:
           #
           # ===============================================================
           #
-          # ¡¾±àÒëR2S¹Ì¼þ¡¿
+          # ã€ç¼–è¯‘R2Så›ºä»¶ã€‘
           # cat >> .config <<EOF
           # CONFIG_TARGET_rockchip=y
           # CONFIG_TARGET_rockchip_armv8=y
           # CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r2s=y
           # EOF
           
-          # ¡¾ÐÞ¸Ä¹Ì¼þ´óÐ¡¡¿
+          # ã€ä¿®æ”¹å›ºä»¶å¤§å°ã€‘
           cat >> .config <<EOF
-          CONFIG_TARGET_KERNEL_PARTSIZE=32 # ¹Ì¼þÖÐÄÚºË·ÖÇø´óÐ¡
-          CONFIG_TARGET_ROOTFS_PARTSIZE=512 # ¹Ì¼þÖÐROOTFS·ÖÇø´óÐ¡
+          CONFIG_TARGET_KERNEL_PARTSIZE=32 # å›ºä»¶ä¸­å†…æ ¸åˆ†åŒºå¤§å°
+          CONFIG_TARGET_ROOTFS_PARTSIZE=512 # å›ºä»¶ä¸­ROOTFSåˆ†åŒºå¤§å°
           EOF
           
-          # ¡¾±àÒëUEFI¹Ì¼þ¡¿
+          # ã€ç¼–è¯‘UEFIå›ºä»¶ã€‘
           cat >> .config <<EOF
           CONFIG_EFI_IMAGES=y
           EOF
           
-          # ¡¾¶àÎÄ¼þÏµÍ³Ö§³Ö¡¿
+          # ã€å¤šæ–‡ä»¶ç³»ç»Ÿæ”¯æŒã€‘
           # cat >> .config <<EOF
           # CONFIG_PACKAGE_kmod-fs-nfs=y
           # CONFIG_PACKAGE_kmod-fs-nfs-common=y
@@ -145,7 +145,7 @@ jobs:
           # CONFIG_PACKAGE_kmod-fs-squashfs=y
           # EOF
           
-          # ¡¾USB3.0Ö§³Ö¡¿
+          # ã€USB3.0æ”¯æŒã€‘
           # cat >> .config <<EOF
           # CONFIG_PACKAGE_kmod-usb-ohci=y
           # CONFIG_PACKAGE_kmod-usb-ohci-pci=y
@@ -154,48 +154,49 @@ jobs:
           # CONFIG_PACKAGE_kmod-usb3=y
           # EOF
           
-          # ¡¾Ìí¼ÓLUCI²å¼þ¡¿
+          # ã€æ·»åŠ LUCIæ’ä»¶ã€‘
           cat >> .config <<EOF
-          CONFIG_PACKAGE_luci-app-accesscontrol=y # ·ÃÎÊÊ±¼ä¿ØÖÆ
-          CONFIG_PACKAGE_luci-app-adblock=y # ADB¹ã¸æ¹ýÂË
-          CONFIG_PACKAGE_luci-app-adbyby-plus=y # ¹ã¸æÆÁ±Î´óÊ¦Plus +
-          CONFIG_PACKAGE_luci-app-airplay2=y # Apple AirPlay2 ÎÞËðÒôÆµ½ÓÊÕ·þÎñÆ÷
-          CONFIG_PACKAGE_luci-app-aria2=y # Aria2ÏÂÔØ¹¤¾ß
-          CONFIG_PACKAGE_luci-app-arpbind=y # IP/MAC°ó¶¨
-          CONFIG_PACKAGE_luci-app-autoreboot=y # Ö§³Ö¼Æ»®ÖØÆô
-          CONFIG_PACKAGE_luci-app-baidupcs-web=y # °Ù¶ÈÍøÅÌ¹ÜÀí
-          CONFIG_PACKAGE_luci-app-cifsd=y # CIFS/SMBÍøÂç¹²Ïí
-          CONFIG_PACKAGE_luci-app-ddns=y # ¶¯Ì¬ÓòÃû DNS£¨¼¯³É°¢ÀïDDNS¿Í»§¶Ë£©
-          CONFIG_PACKAGE_luci-app-diskman=y # ´ÅÅÌ¹ÜÀí¹¤¾ß
+          CONFIG_PACKAGE_luci-app-accesscontrol=y # è®¿é—®æ—¶é—´æŽ§åˆ¶
+          CONFIG_PACKAGE_luci-app-adblock=y # ADBå¹¿å‘Šè¿‡æ»¤
+          CONFIG_PACKAGE_luci-app-adbyby-plus=y # å¹¿å‘Šå±è”½å¤§å¸ˆPlus +
+          CONFIG_PACKAGE_luci-app-airplay2=y # Apple AirPlay2 æ— æŸéŸ³é¢‘æŽ¥æ”¶æœåŠ¡å™¨
+          CONFIG_PACKAGE_luci-app-aria2=y # Aria2ä¸‹è½½å·¥å…·
+          CONFIG_PACKAGE_luci-app-arpbind=y # IP/MACç»‘å®š
+          CONFIG_PACKAGE_luci-app-autoreboot=y # æ”¯æŒè®¡åˆ’é‡å¯
+          CONFIG_PACKAGE_luci-app-baidupcs-web=y # ç™¾åº¦ç½‘ç›˜ç®¡ç†
+          CONFIG_PACKAGE_luci-app-cifsd=y # CIFS/SMBç½‘ç»œå…±äº«
+          CONFIG_PACKAGE_luci-app-ddns=y # åŠ¨æ€åŸŸå DNSï¼ˆé›†æˆé˜¿é‡ŒDDNSå®¢æˆ·ç«¯ï¼‰
+          CONFIG_PACKAGE_luci-app-diskman=y # ç£ç›˜ç®¡ç†å·¥å…·
           CONFIG_PACKAGE_luci-app-diskman_INCLUDE_btrfs_progs=y
           CONFIG_PACKAGE_luci-app-diskman_INCLUDE_lsblk=y
           CONFIG_PACKAGE_luci-app-diskman_INCLUDE_mdadm=y
           CONFIG_PACKAGE_luci-app-diskman_INCLUDE_kmod_md_raid456=y
           CONFIG_PACKAGE_luci-app-diskman_INCLUDE_kmod_md_linear=y
-          CONFIG_PACKAGE_luci-app-docker=y # DockerÈÝÆ÷
-          CONFIG_PACKAGE_luci-app-familycloud=y # ¼ÒÍ¥ÔÆÅÌ
-          CONFIG_PACKAGE_luci-app-filetransfer=y # ÎÄ¼þ´«Êä£¨¿Éweb°²×°ipk°ü£©
-          CONFIG_PACKAGE_luci-app-firewall=y # Ìí¼Ó·À»ðÇ½
-          CONFIG_PACKAGE_luci-app-frpc=y # ÄÚÍø´©Í¸Frp¿Í»§¶Ë
-          CONFIG_PACKAGE_luci-app-hd-idle=y # Ó²ÅÌÐÝÃß
-          CONFIG_PACKAGE_luci-app-ipsec-vpnd=y # IPSec VPN·þÎñÆ÷
-          CONFIG_PACKAGE_luci-app-meshwizard=y # ÍøÂçÉèÖÃÏòµ¼
-          CONFIG_PACKAGE_luci-app-minidlna=y # ÍêÈ«¼æÈÝDLNA / UPnP-AV¿Í»§¶ËµÄ·þÎñÆ÷Èí¼þ
-          CONFIG_PACKAGE_luci-app-mwan3=y # MWAN3¸ºÔØ¾ùºâ
-          CONFIG_PACKAGE_luci-app-mwan3helper=y # MWAN3·ÖÁ÷ÖúÊÖ
-          CONFIG_PACKAGE_luci-app-netdata=y # NetdataÊµÊ±¼à¿Ø£¨Í¼±í£©
-          CONFIG_PACKAGE_luci-app-nfs=y # NFSÍøÂç¹²Ïí
-          CONFIG_PACKAGE_luci-app-nlbwmon=y # ÍøÂç´ø¿í¼àÊÓÆ÷
-          CONFIG_PACKAGE_luci-app-nps=y # ÄÚÍø´©Í¸nps
-          CONFIG_PACKAGE_luci-app-pppoe-relay=y # PPOE ´©Í¸
-          CONFIG_PACKAGE_luci-app-ps3netsrv=y # PS3 NET·þÎñÆ÷£¨ÓÃÓÚ¼ÓÔØÀ¶¹â/ÓÎÏ·ISO/PKG£©
-          CONFIG_PACKAGE_luci-app-wrtbwmon=y # ÊµÊ±Á÷Á¿¼à²â
-          CONFIG_PACKAGE_luci-app-ramfree=y # ÊÍ·ÅÄÚ´æ
-          CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-webui=y # ÃüÁîÐÐÔÆ¶ËÍ¬²½¹¤¾ß(Rclone½çÃæ)
-          CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-ng=y # ÃüÁîÐÐÔÆ¶ËÍ¬²½¹¤¾ß(RcloneÁíÒ»¸ö½çÃæ)
-          CONFIG_PACKAGE_luci-app-rclone_INCLUDE_fuse-utils=y # ÃüÁîÐÐÔÆ¶ËÍ¬²½¹¤¾ß(fuse-utils£¨¹ÒÔØÔÆ´æ´¢£©)
-          CONFIG_PACKAGE_luci-app-sfe=y # Turbo ACCÍøÂç¼ÓËÙ£¨flowoffload¶þÑ¡Ò»£©
-          CONFIG_PACKAGE_luci-app-sqm=y # Á÷Á¿ÖÇÄÜ¶ÓÁÐ¹ÜÀí£¨QOS£©
+          CONFIG_PACKAGE_luci-app-docker=y # Dockerå®¹å™¨
+          CONFIG_PACKAGE_luci-app-familycloud=y # å®¶åº­äº‘ç›˜
+          CONFIG_PACKAGE_luci-app-filetransfer=y # æ–‡ä»¶ä¼ è¾“ï¼ˆå¯webå®‰è£…ipkåŒ…ï¼‰
+          CONFIG_PACKAGE_luci-app-firewall=y # æ·»åŠ é˜²ç«å¢™
+          CONFIG_PACKAGE_luci-app-frpc=y # å†…ç½‘ç©¿é€Frpå®¢æˆ·ç«¯
+          CONFIG_PACKAGE_luci-app-hd-idle=y # ç¡¬ç›˜ä¼‘çœ 
+          CONFIG_PACKAGE_luci-app-ipsec-vpnd=y # IPSec VPNæœåŠ¡å™¨
+          CONFIG_PACKAGE_luci-app-meshwizard=y # ç½‘ç»œè®¾ç½®å‘å¯¼
+          CONFIG_PACKAGE_luci-app-minidlna=y # å®Œå…¨å…¼å®¹DLNA / UPnP-AVå®¢æˆ·ç«¯çš„æœåŠ¡å™¨è½¯ä»¶
+          CONFIG_PACKAGE_luci-app-mwan3=y # MWAN3è´Ÿè½½å‡è¡¡
+          CONFIG_PACKAGE_luci-app-mwan3helper=y # MWAN3åˆ†æµåŠ©æ‰‹
+          CONFIG_PACKAGE_luci-app-netdata=y # Netdataå®žæ—¶ç›‘æŽ§ï¼ˆå›¾è¡¨ï¼‰
+          CONFIG_PACKAGE_luci-app-nfs=y # NFSç½‘ç»œå…±äº«
+          CONFIG_PACKAGE_luci-app-nlbwmon=y # ç½‘ç»œå¸¦å®½ç›‘è§†å™¨
+          CONFIG_PACKAGE_luci-app-nps=y # å†…ç½‘ç©¿é€nps
+          CONFIG_PACKAGE_luci-app-pppoe-relay=y # PPOE ç©¿é€
+          CONFIG_PACKAGE_luci-app-ps3netsrv=y # PS3 NETæœåŠ¡å™¨ï¼ˆç”¨äºŽåŠ è½½è“å…‰/æ¸¸æˆISO/PKGï¼‰
+          CONFIG_PACKAGE_luci-app-wrtbwmon=y # å®žæ—¶æµé‡ç›‘æµ‹
+          CONFIG_PACKAGE_luci-app-ramfree=y # é‡Šæ”¾å†…å­˜
+          CONFIG_PACKAGE_luci-app-rclone=y # å‘½ä»¤è¡Œäº‘ç«¯åŒæ­¥å·¥å…·
+          CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-webui=y # å‘½ä»¤è¡Œäº‘ç«¯åŒæ­¥å·¥å…·(Rcloneç•Œé¢)
+          CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-ng=y # å‘½ä»¤è¡Œäº‘ç«¯åŒæ­¥å·¥å…·(Rcloneå¦ä¸€ä¸ªç•Œé¢)
+          CONFIG_PACKAGE_luci-app-rclone_INCLUDE_fuse-utils=y # å‘½ä»¤è¡Œäº‘ç«¯åŒæ­¥å·¥å…·(fuse-utilsï¼ˆæŒ‚è½½äº‘å­˜å‚¨ï¼‰)
+          CONFIG_PACKAGE_luci-app-sfe=y # Turbo ACCç½‘ç»œåŠ é€Ÿï¼ˆflowoffloadäºŒé€‰ä¸€ï¼‰
+          CONFIG_PACKAGE_luci-app-sqm=y # æµé‡æ™ºèƒ½é˜Ÿåˆ—ç®¡ç†ï¼ˆQOSï¼‰
           CONFIG_PACKAGE_luci-app-ssr-plus=y
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray_plugin=y
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_V2ray=y
@@ -204,26 +205,26 @@ jobs:
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Redsocks2=y
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Kcptun=y
           CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_ShadowsocksR_Server=y
-          CONFIG_PACKAGE_luci-app-statistics=y # Á÷Á¿¼à¿Ø¹¤¾ß
-          CONFIG_PACKAGE_luci-app-syncdial=y # ¶à²¦ÐéÄâÍø¿¨£¨Ô­macvlan£©
-          CONFIG_PACKAGE_luci-app-transmission=y # BTÏÂÔØ¹¤¾ß
-          CONFIG_PACKAGE_luci-app-ttyd=y # ÍøÒ³ÖÕ¶ËÃüÁîÐÐ
-          CONFIG_PACKAGE_luci-app-unblockmusic=y # ½âËøÍøÒ×ÔÆ»ÒÉ«¸èÇú3ºÏ1ÐÂ°æ±¾
-          CONFIG_UnblockNeteaseMusic_Go=y # Golang°æ±¾
-          CONFIG_UnblockNeteaseMusic_NodeJS=y # NodeJS°æ±¾
-          CONFIG_PACKAGE_luci-app-upnp=y # Í¨ÓÃ¼´²å¼´ÓÃUPnP£¨¶Ë¿Ú×Ô¶¯×ª·¢£©
-          CONFIG_PACKAGE_luci-app-usb-printer=y # USB ´òÓ¡·þÎñÆ÷
-          CONFIG_PACKAGE_luci-app-vlmcsd=y # KMS·þÎñÆ÷ÉèÖÃ
-          CONFIG_PACKAGE_luci-app-vsftpd=y # FTP·þÎñÆ÷
-          CONFIG_PACKAGE_luci-app-watchcat=y # ¶ÏÍø¼ì²â¹¦ÄÜÓë¶¨Ê±ÖØÆô
-          CONFIG_PACKAGE_luci-app-webadmin=y  # Web¹ÜÀíÒ³ÃæÉèÖÃ
-          CONFIG_PACKAGE_luci-app-wol=y # WOLÍøÂç»½ÐÑ
-          CONFIG_PACKAGE_luci-app-wrtbwmon=y # ÊµÊ±Á÷Á¿¼à²â
-          CONFIG_PACKAGE_luci-app-xlnetacc=y # Ñ¸À×¿ìÄñ
-          CONFIG_PACKAGE_luci-app-zerotier=y # ZeroTierÄÚÍø´©Í¸
+          CONFIG_PACKAGE_luci-app-statistics=y # æµé‡ç›‘æŽ§å·¥å…·
+          CONFIG_PACKAGE_luci-app-syncdial=y # å¤šæ‹¨è™šæ‹Ÿç½‘å¡ï¼ˆåŽŸmacvlanï¼‰
+          CONFIG_PACKAGE_luci-app-transmission=y # BTä¸‹è½½å·¥å…·
+          CONFIG_PACKAGE_luci-app-ttyd=y # ç½‘é¡µç»ˆç«¯å‘½ä»¤è¡Œ
+          CONFIG_PACKAGE_luci-app-unblockmusic=y # è§£é”ç½‘æ˜“äº‘ç°è‰²æ­Œæ›²3åˆ1æ–°ç‰ˆæœ¬
+          CONFIG_UnblockNeteaseMusic_Go=y # Golangç‰ˆæœ¬
+          CONFIG_UnblockNeteaseMusic_NodeJS=y # NodeJSç‰ˆæœ¬
+          CONFIG_PACKAGE_luci-app-upnp=y # é€šç”¨å³æ’å³ç”¨UPnPï¼ˆç«¯å£è‡ªåŠ¨è½¬å‘ï¼‰
+          CONFIG_PACKAGE_luci-app-usb-printer=y # USB æ‰“å°æœåŠ¡å™¨
+          CONFIG_PACKAGE_luci-app-vlmcsd=y # KMSæœåŠ¡å™¨è®¾ç½®
+          CONFIG_PACKAGE_luci-app-vsftpd=y # FTPæœåŠ¡å™¨
+          CONFIG_PACKAGE_luci-app-watchcat=y # æ–­ç½‘æ£€æµ‹åŠŸèƒ½ä¸Žå®šæ—¶é‡å¯
+          CONFIG_PACKAGE_luci-app-webadmin=y  # Webç®¡ç†é¡µé¢è®¾ç½®
+          CONFIG_PACKAGE_luci-app-wol=y # WOLç½‘ç»œå”¤é†’
+          CONFIG_PACKAGE_luci-app-wrtbwmon=y # å®žæ—¶æµé‡ç›‘æµ‹
+          CONFIG_PACKAGE_luci-app-xlnetacc=y # è¿…é›·å¿«é¸Ÿ
+          CONFIG_PACKAGE_luci-app-zerotier=y # ZeroTierå†…ç½‘ç©¿é€
           EOF
           
-          # ¡¾³£ÓÃÈí¼þ°ü¡¿
+          # ã€å¸¸ç”¨è½¯ä»¶åŒ…ã€‘
           cat >> .config <<EOF
           CONFIG_PACKAGE_curl=y
           CONFIG_PACKAGE_htop=y
@@ -234,14 +235,14 @@ jobs:
           CONFIG_PACKAGE_wget=y
           EOF
           
-          # È¡Ïû±àÒëVMware¾µÏñÒÔ¼°¾µÏñÌî³ä (²»ÒªÉ¾³ý±»Ëõ½øµÄ×¢ÊÍ·ûºÅ):
+          # å–æ¶ˆç¼–è¯‘VMwareé•œåƒä»¥åŠé•œåƒå¡«å…… (ä¸è¦åˆ é™¤è¢«ç¼©è¿›çš„æ³¨é‡Šç¬¦å·):
           # cat >> .config <<EOF
           # # CONFIG_TARGET_IMAGES_PAD is not set
           # # CONFIG_VMDK_IMAGES is not set
           # EOF
       
           # 
-          # ========================¹Ì¼þ¶¨ÖÆ²¿·Ö½áÊø========================
+          # ========================å›ºä»¶å®šåˆ¶éƒ¨åˆ†ç»“æŸ========================
           # 
            
           sed -i 's/^[ \t]*//g' ./.config
