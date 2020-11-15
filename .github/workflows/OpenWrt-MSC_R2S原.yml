@@ -5,7 +5,7 @@
 #
 # Copyright (C) 2020 KFERMercer
 #
-name: OpenWrt-MSC_R2S原（x86-64改）
+name: OpenWrt-MSC_R2Sx86改
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
       - name: set env【设置变量，查看时间，磁盘空间】
         id: admin
         run: |
-          release_tag="OpenWrt-MSC_R2S_$(date +%y%m%d)"
+          release_tag="OpenWrt-MSC_x86-64_$(date +%y%m%d)"
           echo "##[set-output name=release_tag;]$release_tag"
           # 引用变量
           # ${{ steps.admin.outputs.release_tag }}
@@ -189,7 +189,6 @@ jobs:
           CONFIG_PACKAGE_luci-app-nps=y # 内网穿透nps
           CONFIG_PACKAGE_luci-app-pppoe-relay=y # PPOE 穿透
           CONFIG_PACKAGE_luci-app-ps3netsrv=y # PS3 NET服务器（用于加载蓝光/游戏ISO/PKG）
-          CONFIG_PACKAGE_luci-app-wrtbwmon=y # 实时流量监测
           CONFIG_PACKAGE_luci-app-ramfree=y # 释放内存
           CONFIG_PACKAGE_luci-app-rclone=y # 命令行云端同步工具
           CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-webui=y # 命令行云端同步工具(Rclone界面)
