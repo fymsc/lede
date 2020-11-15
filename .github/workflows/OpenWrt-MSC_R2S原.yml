@@ -95,8 +95,8 @@ jobs:
           # 修改hostname
           sed -i "s/set system.@system\[-1\].hostname='OpenWrt'/set system.@system\[-1\].hostname='${{ steps.admin.outputs.release_tag }}'/g" package/base-files/files/bin/config_generate
           # 互换网卡
-          sed -i "s/ucidef_set_interfaces_lan_wan 'eth1' 'eth0'/ucidef_set_interfaces_lan_wan 'eth0' 'eth1'/g" target/linux/rockchip/armv8/base-files/etc/board.d/02_network
-          sed -i "s/ucidef_set_interface_lan 'eth0'/ucidef_set_interface_lan 'eth1'/g" target/linux/rockchip/armv8/base-files/etc/board.d/02_network
+          # sed -i "s/ucidef_set_interfaces_lan_wan 'eth1' 'eth0'/ucidef_set_interfaces_lan_wan 'eth0' 'eth1'/g" target/linux/rockchip/armv8/base-files/etc/board.d/02_network
+          # sed -i "s/ucidef_set_interface_lan 'eth0'/ucidef_set_interface_lan 'eth1'/g" target/linux/rockchip/armv8/base-files/etc/board.d/02_network
           # 修改时区
           sed -i "s/set system\.@system\[-1\]\.timezone='UTC'/set system\.@system\[-1\]\.timezone='CST-8'/g" package/base-files/files/bin/config_generate
           # ===========================================
