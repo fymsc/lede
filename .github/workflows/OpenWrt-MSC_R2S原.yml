@@ -118,11 +118,11 @@ jobs:
           # ===============================================================
           #
           # 【编译R2S固件】
-          cat >> .config <<EOF
-          CONFIG_TARGET_rockchip=y
-          CONFIG_TARGET_rockchip_armv8=y
-          CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r2s=y
-          EOF
+          # cat >> .config <<EOF
+          # CONFIG_TARGET_rockchip=y
+          # CONFIG_TARGET_rockchip_armv8=y
+          # CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r2s=y
+          # EOF
           
           # 【修改固件大小】
           cat >> .config <<EOF
