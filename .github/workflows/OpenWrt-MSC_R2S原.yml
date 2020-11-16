@@ -81,7 +81,7 @@ jobs:
           # LuCI主题:
           cat >> .config <<EOF
           CONFIG_PACKAGE_luci-theme-argon=y
-          CONFIG_PACKAGE_luci-theme-atmaterial=y # 好像失效了
+          # CONFIG_PACKAGE_luci-theme-atmaterial=y # 好像失效了
           CONFIG_PACKAGE_luci-theme-netgear=y
           EOF
           
@@ -118,11 +118,11 @@ jobs:
           # ===============================================================
           #
           # 【编译R2S固件】
-          # cat >> .config <<EOF
-          # CONFIG_TARGET_rockchip=y
-          # CONFIG_TARGET_rockchip_armv8=y
-          # CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r2s=y
-          # EOF
+          cat >> .config <<EOF
+          CONFIG_TARGET_rockchip=y
+          CONFIG_TARGET_rockchip_armv8=y
+          CONFIG_TARGET_rockchip_armv8_DEVICE_friendlyarm_nanopi-r2s=y
+          EOF
           
           # 【修改固件大小】
           cat >> .config <<EOF
